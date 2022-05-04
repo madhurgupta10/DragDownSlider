@@ -12,5 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Cred Swipedown Animation"
+rootProject.name = "DragDownAnimation"
 include ':app'
+include ':drag_down_animation'

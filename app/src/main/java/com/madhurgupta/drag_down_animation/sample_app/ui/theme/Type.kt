@@ -1,4 +1,4 @@
-package com.example.credswipedownanimation.ui.theme
+package com.madhurgupta.drag_down_animation.sample_app.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

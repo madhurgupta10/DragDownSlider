@@ -1,4 +1,4 @@
-package com.example.credswipedownanimation
+package com.madhurgupta.drag_down_animation
 
 import org.junit.Test
 
