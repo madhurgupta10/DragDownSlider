@@ -83,7 +83,13 @@ fun DragDownSlider() {
 
     Column(
         modifier = Modifier
-            .height(cardSize + distanceBetweenCircles + circleSize)
+            .height(
+                if (showCompactCard) {
+                    cardSize + distanceBetweenCircles + circleSize
+                } else {
+                    cardSize + circleSize
+                }
+            )
             .padding(24.dp),
     ) {
         Box {
