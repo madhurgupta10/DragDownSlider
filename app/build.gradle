@@ -7,7 +7,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.madhurgupta.drag_down_animation.sample_app"
+        applicationId "com.madhurgupta.dragdownslider.sampleApp"
         minSdk 21
         targetSdk 31
         versionCode 1
@@ -46,7 +46,7 @@ android {
 }
 
 dependencies {
-    implementation project (':drag_down_animation')
+    implementation project(':dragdownslider')
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
