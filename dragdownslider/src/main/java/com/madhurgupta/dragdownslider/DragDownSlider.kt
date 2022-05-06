@@ -1,130 +1,109 @@
 package com.madhurgupta.dragdownslider
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.SwipeableState
+import androidx.compose.material.swipeable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 @ExperimentalMaterialApi
 @Composable
-fun DragDownSlider() {
-    val density = LocalDensity.current
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
+fun DragDownSlider(
+    modifier: Modifier = Modifier,
+    arrowColor: Color = Color.Green,
+    dragTargetShape: Shape = CircleShape,
+    dragTargetColor: Color = Color.Transparent,
+    dragTargetBorder: BorderStroke = BorderStroke(1.dp, Color.LightGray),
+    dragTargetModifier: Modifier = Modifier,
+    dragTargetContent: @Composable () -> Unit = {},
+    draggableSize: Dp = 100.dp,
+    draggableShape: Shape = CircleShape,
+    draggableColor: Color = Color.Black,
+    draggableContent: @Composable () -> Unit = {},
+    draggableModifier: Modifier = Modifier,
+    distance: Dp = 300.dp,
+    compactCardSize: Dp,
+    expandCardSize: Dp = compactCardSize + draggableSize,
+    parentCardModifier: Modifier = Modifier,
+    parentCardContent: @Composable () -> Unit = {},
+    swipeableState: SwipeableState<SliderState>,
+    isSuccessfulWithoutError: Boolean,
+    isDragEnabled: Boolean,
+    onSuccess: () -> Unit,
+    onFailure: () -> Unit,
+) {
 
-    val cardSize = screenWidth
-    val circleSize = 100.dp
-    val distanceBetweenCircles = 300.dp
-
-    val startPosition = 0
-    val endPosition = 1
-
-    val distanceBetweenCirclesInPx =
-        with(density) { (distanceBetweenCircles - circleSize).toPx() }
+    val distanceInPx =
+        with(LocalDensity.current) { (distance - draggableSize).toPx() }
     val anchors =
         mapOf(
-            0f to startPosition,
-            distanceBetweenCirclesInPx to endPosition
+            0f to SliderState.Start,
+            distanceInPx to SliderState.End
         ) // Maps anchor points (in px) to states
-
-    val isDragEnabled by rememberSaveable { mutableStateOf(true) }
-    var showCompactCard by rememberSaveable { mutableStateOf(true) }
-    val swipeableState = rememberSwipeableState(startPosition)
-    val scope = rememberCoroutineScope()
-
 
     if (swipeableState.isAnimationRunning) {
         DisposableEffect(Unit) {
             onDispose {
-//                isDragEnabled.value = false
                 when (swipeableState.currentValue) {
-                    endPosition -> {
-                        showCompactCard = false
-                        scope.launch {
-//                            swipeableState.snapTo(startPosition) //onfail
+                    SliderState.End -> {
+                        if (isSuccessfulWithoutError) {
+                            onSuccess.invoke()
+                        } else {
+                            onFailure.invoke()
                         }
                     }
+                    else -> {}
                 }
             }
         }
     }
-//    if (swipeableState.currentValue == endPosition) {
-//        DisposableEffect(Unit) {
-//            onDispose {
-//                isDragEnabled.value = false // disable slider
-//            }
-//        }
-//    }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
+            .width(compactCardSize)
             .height(
-                if (showCompactCard) {
-                    cardSize + distanceBetweenCircles + circleSize
+                if (isDragEnabled) {
+                    expandCardSize + distance
                 } else {
-                    cardSize + circleSize
+                    compactCardSize + draggableSize
                 }
             )
             .padding(24.dp),
     ) {
         Box {
-            Card(
-                shape = RoundedCornerShape(8.dp),
-                backgroundColor = Color.White,
-                modifier = Modifier
-                    .width(cardSize)
-                    .height(
-                        if (showCompactCard) {
-                            cardSize
-                        } else {
-                            cardSize + circleSize
-                        }
-                    )
-                    .animateContentSize(
-                        animationSpec = tween(
-                            durationMillis = 300,
-                            easing = LinearOutSlowInEasing
-                        )
-                    )
-            ) {}
-            if (showCompactCard) {
-                Icon(
-                    Icons.Filled.KeyboardArrowDown,
-                    "arrow",
-                    tint = Color.Green,
-                    modifier = Modifier
-                        .size(circleSize / 4)
-                        .align(Alignment.BottomCenter)
-                        .offset(y = (distanceBetweenCircles - circleSize) / 2)
+            ParentCard(
+                compactCardSize = compactCardSize,
+                expandCardSize = expandCardSize,
+                showCompactCard = isDragEnabled,
+                modifier = parentCardModifier
+            ) {
+                parentCardContent()
+            }
+            if (isDragEnabled) {
+                Arrow(
+                    color = arrowColor,
+                    distance = distance,
+                    draggableSize = draggableSize,
+                    modifier = Modifier.align(Alignment.BottomCenter)
                 )
                 Column(
                     modifier = Modifier
-                        .height(distanceBetweenCircles)
+                        .height(distance)
                         .align(Alignment.BottomCenter)
-                        .offset(y = distanceBetweenCircles - circleSize / 2)
+                        .offset(y = distance - draggableSize / 2)
                         .swipeable(
                             enabled = isDragEnabled,
                             state = swipeableState,
@@ -136,36 +115,26 @@ fun DragDownSlider() {
                         .background(Color.Transparent),
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    val state = remember {
-                        MutableTransitionState(false).apply {
-                            // Start the animation immediately.
-                            targetState = true
-                        }
-                    }
-                    Card(
-                        shape = CircleShape,
+                    Draggable(
+                        shape = draggableShape,
+                        color = draggableColor,
+                        size = draggableSize,
                         elevation = 4.dp,
-                        backgroundColor = Color.Black,
-                        modifier = Modifier
-                            .width(circleSize)
-                            .aspectRatio(1f)
-                            .offset {
-                                IntOffset(0, swipeableState.offset.value.roundToInt())
-                            }
-                            .clip(CircleShape)
-                            .zIndex(1f)
-                    ) {}
-
-                    Card(
-                        shape = CircleShape,
+                        modifier = draggableModifier,
+                        swipeableState = swipeableState,
+                    ) {
+                        draggableContent()
+                    }
+                    DragTarget(
+                        shape = dragTargetShape,
+                        color = dragTargetColor,
+                        size = draggableSize,
                         elevation = 0.dp,
-                        contentColor = Color.Transparent,
-                        backgroundColor = Color.Transparent,
-                        border = BorderStroke(1.dp, Color.LightGray),
-                        modifier = Modifier
-                            .size(circleSize)
-                            .clip(CircleShape)
-                    ) {}
+                        border = dragTargetBorder,
+                        modifier = dragTargetModifier
+                    ) {
+                        dragTargetContent()
+                    }
                 }
             }
         }
