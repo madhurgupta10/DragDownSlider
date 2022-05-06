@@ -45,6 +45,17 @@ fun DragDownSlider(
     onSuccess: () -> Unit,
     onFailure: () -> Unit,
 ) {
+    if (compactCardSize >= expandCardSize) {
+        throw IllegalArgumentException("expandCardSize should be greater than compactCardSize")
+    }
+
+    if (draggableSize >= compactCardSize) {
+        throw IllegalArgumentException("draggableSize should be less than compactCardSize")
+    }
+
+    if (distance <= (draggableSize + draggableSize)) {
+        throw IllegalArgumentException("distance should be greater than twice the size of draggable")
+    }
 
     val distanceInPx =
         with(LocalDensity.current) { (distance - draggableSize).toPx() }
