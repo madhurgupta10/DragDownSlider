@@ -99,7 +99,7 @@ fun DragDownSlider(
             .width(compactCardSize)
             .height(
                 if (onSlideCompleteState == OnSlideCompleteState.Success) {
-                    expandCardSize + distance
+                    expandCardSize
                 } else {
                     compactCardSize + distance
                 }
