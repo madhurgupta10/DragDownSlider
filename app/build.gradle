@@ -15,7 +15,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "API_BASE_URL", "\"https://api.mocklets.com/\""
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.github.madhurgupta10.dragdownslider.sampleApp.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary true
         }

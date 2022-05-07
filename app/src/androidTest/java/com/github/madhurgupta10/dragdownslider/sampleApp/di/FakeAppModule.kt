@@ -6,8 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import java.com.github.madhurgupta10.dragdownslider.sampleApp.data.FakeMockletsApi
-import java.com.github.madhurgupta10.dragdownslider.sampleApp.data.FakeSampleRepository
+import com.github.madhurgupta10.dragdownslider.sampleApp.data.FakeMockletsApi
+import com.github.madhurgupta10.dragdownslider.sampleApp.data.FakeSampleRepository
 import javax.inject.Singleton
 
 @Module

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.madhurgupta10.dragdownslider.DragDownSlider
@@ -65,7 +66,8 @@ class MainActivity : ComponentActivity() {
                                 checked = isSuccessCase,
                                 onCheckedChange = {
                                     viewModel.toggle()
-                                }
+                                },
+                                modifier = Modifier.testTag("toggle")
                             )
                         }
                         DragDownSlider(
@@ -75,7 +77,11 @@ class MainActivity : ComponentActivity() {
                             isDragEnabled = viewModel.isDragEnabled,
                             onSlideComplete = {
                                 viewModel.getResponse()
-                            }
+                            },
+                            modifier = Modifier.testTag("dragdownslider"),
+                            parentCardModifier = Modifier.testTag("parentCard"),
+                            dragTargetModifier = Modifier.testTag("dragTarget"),
+                            draggableModifier = Modifier.testTag("draggable"),
                         )
                     }
 
