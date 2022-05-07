@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.madhurgupta.dragdownslider.sampleApp">
+    package="com.github.madhurgupta10.dragdownslider.sampleApp">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SampleAppForDragDownSlider">
         <activity
-            android:name="com.madhurgupta.dragdownslider.sampleApp.ui.main.MainActivity"
+            android:name="com.github.madhurgupta10.dragdownslider.sampleApp.ui.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.SampleAppForDragDownSlider">
             <intent-filter>

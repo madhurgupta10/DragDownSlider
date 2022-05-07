@@ -9,7 +9,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.madhurgupta.dragdownslider.sampleApp"
+        applicationId "com.github.madhurgupta10.dragdownslider.sampleApp"
         minSdk 21
         targetSdk 31
         versionCode 1
