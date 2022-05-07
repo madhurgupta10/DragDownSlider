@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.madhurgupta10.dragdownslider.OnSlideCompleteState
 import com.github.madhurgupta10.dragdownslider.sampleApp.data.repository.SampleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,15 +39,20 @@ class MainViewModel @Inject constructor(
     fun getResponse() {
         responseState = OnSlideCompleteState.Loading
         viewModelScope.launch {
-            val response = repository.getResponse(isSuccessCase)
-            if (response != null) {
-                if (response.success) {
-                    onSuccess()
+            try {
+                val response = repository.getResponse(isSuccessCase)
+                if (response != null) {
+                    if (response.success) {
+                        onSuccess()
+                    } else {
+                        onError("API Error")
+                    }
                 } else {
-                    onError()
+                    onError("NPE Error")
                 }
-            } else {
-                onError()
+            } catch (e: Exception) {
+                delay(500) // Required to trigger LaunchEffect on state change
+                onError("Error - $e")
             }
         }
     }
@@ -60,10 +66,10 @@ class MainViewModel @Inject constructor(
         responseState = OnSlideCompleteState.Success
     }
 
-    private fun onError() {
+    private fun onError(message: String) {
         isDragEnabled = true
         responseState = OnSlideCompleteState.Error
-        sendMessage("Error")
+        sendMessage(message)
     }
 
     private fun sendMessage(message: String) {
