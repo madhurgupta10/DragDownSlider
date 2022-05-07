@@ -32,7 +32,7 @@ class MainViewModel @Inject constructor(
     fun toggle() {
         isSuccessCase = !isSuccessCase
         isDragEnabled = true
-        responseState = OnSlideCompleteState.Loading
+        responseState = OnSlideCompleteState.Error
     }
 
     fun getResponse() {
