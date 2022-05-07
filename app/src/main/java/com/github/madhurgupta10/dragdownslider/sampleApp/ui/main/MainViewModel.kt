@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun onSuccess() {
-        isDragEnabled = true
+        isDragEnabled = false
         responseState = OnSlideCompleteState.Success
     }
 
