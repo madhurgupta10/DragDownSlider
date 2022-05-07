@@ -3,7 +3,6 @@ package com.madhurgupta.dragdownslider
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeableState
@@ -14,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlin.math.roundToInt
 
@@ -26,7 +24,7 @@ fun Draggable(
     elevation: Dp,
     size: Dp,
     modifier: Modifier,
-    swipeableState: SwipeableState<SliderState>,
+    sliderState: SwipeableState<SliderState>,
     content: @Composable () -> Unit
 ) {
     Card(
@@ -37,7 +35,7 @@ fun Draggable(
             .width(size)
             .aspectRatio(1f)
             .offset {
-                IntOffset(0, swipeableState.offset.value.roundToInt())
+                IntOffset(0, sliderState.offset.value.roundToInt())
             }
             .clip(shape)
             .zIndex(1f)

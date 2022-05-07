@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun ParentCard(
     compactCardSize: Dp,
     expandCardSize: Dp,
-    showCompactCard: Boolean,
+    showExpandedCard: Boolean,
     modifier: Modifier,
     content: @Composable () -> Unit
 ) {
@@ -27,10 +27,10 @@ fun ParentCard(
         modifier = modifier
             .width(compactCardSize)
             .height(
-                if (showCompactCard) {
-                    compactCardSize
-                } else {
+                if (showExpandedCard) {
                     expandCardSize
+                } else {
+                    compactCardSize
                 }
             )
             .animateContentSize(

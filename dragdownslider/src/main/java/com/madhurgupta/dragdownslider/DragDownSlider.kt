@@ -11,6 +11,7 @@ import androidx.compose.material.SwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,11 +40,13 @@ fun DragDownSlider(
     expandCardSize: Dp = compactCardSize + draggableSize,
     parentCardModifier: Modifier = Modifier,
     parentCardContent: @Composable () -> Unit = {},
-    swipeableState: SwipeableState<SliderState>,
-    isSuccessfulWithoutError: Boolean,
+    sliderState: SwipeableState<SliderState>,
+    onSlideCompleteState: OnSlideCompleteState,
     isDragEnabled: Boolean,
-    onSuccess: () -> Unit,
-    onFailure: () -> Unit,
+    onSlideComplete: () -> Unit,
+    onSuccess: () -> Unit = {},
+    onError: () -> Unit = {},
+    onLoading: () -> Unit = {},
 ) {
     if (compactCardSize >= expandCardSize) {
         throw IllegalArgumentException("expandCardSize should be greater than compactCardSize")
@@ -65,19 +68,28 @@ fun DragDownSlider(
             distanceInPx to SliderState.End
         ) // Maps anchor points (in px) to states
 
-    if (swipeableState.isAnimationRunning) {
+    if (sliderState.isAnimationRunning) {
         DisposableEffect(Unit) {
             onDispose {
-                when (swipeableState.currentValue) {
-                    SliderState.End -> {
-                        if (isSuccessfulWithoutError) {
-                            onSuccess.invoke()
-                        } else {
-                            onFailure.invoke()
-                        }
-                    }
-                    else -> {}
+                if (sliderState.currentValue == SliderState.End) {
+                    onSlideComplete.invoke()
                 }
+            }
+        }
+    }
+
+    LaunchedEffect(onSlideCompleteState) {
+        when (onSlideCompleteState) {
+            OnSlideCompleteState.Success -> {
+                onSuccess.invoke()
+                sliderState.snapTo(SliderState.End)
+            }
+            OnSlideCompleteState.Error -> {
+                onError.invoke()
+                sliderState.snapTo(SliderState.Start)
+            }
+            OnSlideCompleteState.Loading -> {
+                onLoading.invoke()
             }
         }
     }
@@ -86,10 +98,10 @@ fun DragDownSlider(
         modifier = modifier
             .width(compactCardSize)
             .height(
-                if (isDragEnabled) {
+                if (onSlideCompleteState == OnSlideCompleteState.Success) {
                     expandCardSize + distance
                 } else {
-                    compactCardSize + draggableSize
+                    compactCardSize + distance
                 }
             )
             .padding(24.dp),
@@ -98,12 +110,12 @@ fun DragDownSlider(
             ParentCard(
                 compactCardSize = compactCardSize,
                 expandCardSize = expandCardSize,
-                showCompactCard = isDragEnabled,
+                showExpandedCard = onSlideCompleteState == OnSlideCompleteState.Success,
                 modifier = parentCardModifier
             ) {
                 parentCardContent()
             }
-            if (isDragEnabled) {
+            if (onSlideCompleteState != OnSlideCompleteState.Success) {
                 Arrow(
                     color = arrowColor,
                     distance = distance,
@@ -117,7 +129,7 @@ fun DragDownSlider(
                         .offset(y = distance - draggableSize / 2)
                         .swipeable(
                             enabled = isDragEnabled,
-                            state = swipeableState,
+                            state = sliderState,
                             anchors = anchors,
                             velocityThreshold = Dp.Infinity,
                             thresholds = { _, _ -> FractionalThreshold(1f) },
@@ -132,7 +144,7 @@ fun DragDownSlider(
                         size = draggableSize,
                         elevation = 4.dp,
                         modifier = draggableModifier,
-                        swipeableState = swipeableState,
+                        sliderState = sliderState,
                     ) {
                         draggableContent()
                     }
