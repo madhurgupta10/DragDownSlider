@@ -11,6 +11,7 @@ class SampleRepositoryImpl @Inject constructor(
     private val dispatcher: CoroutineDispatcher
 ) : SampleRepository {
 
+    // Gets the response from the mocklets API
     override suspend fun getResponse(isSuccess: Boolean): Response? = withContext(dispatcher) {
         if (isSuccess) {
             api.getResponse("success_case")

@@ -6,6 +6,7 @@ import retrofit2.http.Path
 
 interface MockletsApi {
 
+    // Gets the response from the mocklets API
     @GET("p68470/{case}")
     suspend fun getResponse(@Path("case") case: String): Response?
 
